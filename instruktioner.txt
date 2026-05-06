@@ -1,0 +1,6 @@
+Steg 1. Skapa tärningar.
+Steg 2. Slumpmässiga tärningar 1-6
+Steg 3. Definera alla olika kombinationer  (par, ettor...)
+Steg 4. Funktioner för att räkna alla poäng 
+Steg 5. Funktion för att "låsa in" tärningar
+Steg 6. Funktion för att displaya poäng/score
