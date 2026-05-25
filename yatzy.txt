@@ -1,6 +1,240 @@
-Steg 1. Skapa tärningar.
-Steg 2. Slumpmässiga tärningar 1-6
-Steg 3. Definera alla olika kombinationer  (par, ettor...)
-Steg 4. Funktioner för att räkna alla poäng 
-Steg 5. Funktion för att "låsa in" tärningar
-Steg 6. Funktion för att displaya poäng/score
+Steg 1: Förstå spelet och vilka kombinationer som finns:
+
+
+   1. Spelet ska slumpa fram 5 tärningar.
+
+   2. Spelaren får upp till två omkastningar av valfria tärningar.
+
+   3. När spelaren är klar ska programmet kontrollera vilka kombinationer som uppfylls.
+   
+   4. Om en eller flera kombinationer finns:
+        - Spelaren får välja vilken kombination som ska användas.
+  
+   5. Om ingen kombination uppfylls:
+        - Spelaren måste stryka en kombination, (vilket ger 0 poäng).
+
+
+   6. Möjliga Yatzy-kombinationer som spelet ska kunna känna igen:
+
+      Övre sektionen (räkna antal av en viss siffra):
+        - Ettor: räkna alla tärningar som visar 1.
+        - Tvåor: räkna alla tärningar som visar 2.
+        - Treor: räkna alla tärningar som visar 3.
+        - Fyror: räkna alla tärningar som visar 4.
+        - Femmor: räkna alla tärningar som visar 5.
+        - Sexor: räkna alla tärningar som visar 6.
+        - Bonus om summan är 63 eller mer.
+    
+      Undre sektionen (kombinationer):
+        - Ett par: två tärningar med samma värde.
+        - Två par: fyra tärningar, med två olika par.
+        - Tretal: tre tärningar med samma värde.
+        - Fyrtal: fyra tärningar med samma värde.
+        - Kåk: ett tretal + ett par.
+        - Liten stege: tärningarna är 1, 2, 3, 4, 5 (ordningen spelar ingen roll).
+        - Stor stege: tärningarna är 2, 3, 4, 5, 6 (ordningen spelar ingen roll).
+        - Chans: summan av alla tärningar.
+        - Yatzy: alla fem tärningar är lika (ger 50 poäng).
+
+   7. Strykning:
+        - Om ingen kombination passar får spelaren stryka en kombination.
+        - Den kombinationen får då 0 poäng.
+
+______________________________________________________________________________________________________________________________  
+
+Steg 2: Representera tärningarna med en lista och hantera omkastningar, samt lista med alla kombinationer:
+
+
+   1. Skapa lista "tillgangliga_kombinationer" med alla 15 Yatzy-kombinationer:
+       ["Ettor", "Tvåor", "Treor", "Fyror", "Femmor", "Sexor", "Par", "Två par", "Tretal", "Fyrtal", "Kåk", "Liten stege", "Stor stege", "Chans", "Yatzy"]
+
+   2. Skapa en tom lista "poang_lista" som ska lagra poängen.
+
+   3. Skapa en tom lista som heter "hand".
+       - Den ska innehålla fem tärningar.
+
+   4. Upprepa 5 gånger:
+       - Slumpa ett tal mellan 1 och 6.
+       - Lägg till talet i listan "hand".
+       (Listan innehåller nu fem tärningar.)
+
+   5. Skriv ut listan "hand" till spelaren så att spelaren ser sina tärningar.
+
+   6. Sätt en variabel "omkastningar_kvar" = 2.
+
+   7. Så länge omkastningar_kvar > 0:
+       - Fråga spelaren: "Vill du kasta om några tärningar? (ja/nej)"
+
+       - Om spelaren skriver "nej":
+            - Avsluta omkastningsloopen.
+
+       - Om spelaren skriver "ja":
+             - Be spelaren skriva vilka tärningar som ska kastas om genom att ange deras nummer (1-5).
+
+             - När spelaren har skrivit sina val:
+                 - Gör om tärningsnumren till list-index genom att ta numret -1.
+                 (Tärning 1 --> index 0, tärning 2 --> index 1, osv.)
+
+             - För varje valt tärningsnummer:
+                 - Slumpa ett nytt tal mellan 1 och 6.
+                 - Sätt in det nya värdet på rätt plats i listan "hand".
+             
+             - Skriv ut den uppdaterade listan "hand".
+
+             - Minska omkastningar_kvar med 1.
+
+   8. När inga omkastningar återstår:
+       - Listan "hand" är nu den färdiga handen som ska bedömas i nästa steg.
+
+    
+______________________________________________________________________________________________________________________________
+
+Steg 3: Räkna hur många av varje tärningsvärde som finns (antal-lista)
+
+
+   1. Skapa en lista "antal_lista" med sex platser, alla satta till 0.
+      (Antal-listan har 6 platser då den räknar hur många av varje tärningsvärde(1-6) som finns. Varje plats motsvarar ett tärningsvärde, t.ex. visar plats 0 hur många ettor som finns och plats 5 hur många sexor som finns.)
+
+   2. För varje tärning i listan "hand":
+       - Ta reda på tärningens värde (t.ex. 1, 3 eller 6).
+       - Öka värdet i "antal_lista" på rätt plats med 1. 
+       (Exempel: om tärningen visar 4, öka antal_lista[3] med 1.)
+
+   3. När alla tärningar har räknats:
+       - Listan "antal_lista" visar nu hur många av varje tärningsvärde som finns.
+       (Exempel: hand = [3, 6, 3, 1, 6]
+                 antal_lista = [1, 0, 2, 0, 0, 2])
+                
+   4. Denna antal-lista används i nästa steg för att:
+       - Avgöra om det finns par, två par, tretal, fyrtal, kåk eller yatzy.
+       - Räkna poäng för ettor-sexor.
+       - Kontrollera stege (stor/liten).
+       - Beräkna chans.
+
+______________________________________________________________________________________________________________________________
+
+Steg 4: Använd antal-listan för att avgöra vilka kombinationer som finns
+
+
+   1. Kontrollera om det finns ett par:
+       - Om någon plats i antal_lista är 2 eller mer finns ett par.
+
+   2. Kontrollera om det finns två par:
+       - Räkna hur många platser i antal_lista som är 2 eller mer.
+       - Om det finns två sådana platser --> två par.
+  
+   3. Kontrollera om det finns ett tretal:
+       - Om någon plats i antal_lista är 3 eller mer --> tretal.
+
+   4. Kontrollera om det finns ett fyrtal:
+       - Om någon plats i antal_lista är 4 eller mer --> fyrtal.
+
+   5. Kontrollera om det finns kåk:
+       - Om antal_lista innehåller både:
+           - en plats med värdet 3 (tretal).
+           - och en plats med värdet 2 (par).
+           --> kåk.
+    
+   6. Kontrollera om det finns yatzy:
+       - Om någon plats i antal_lista är 5 --> yatzy.
+
+   7. Kontrollera liten stege:
+       - Om antal_lista är exakt:
+         [1, 1, 1, 1, 1, 0]  --> liten stege
+
+   8. Kontrollera stor stege:
+       - Om antal_lista är exakt:
+         [0, 1, 1, 1, 1, 1]  --> stor stege
+
+   9. Kontrollera chans:
+       - Chans finns alltid, eftersom det bara är summan av alla tärningar.
+
+   10. Spara alla kombinationer som uppfylls i en lista "mojliga_kombinationer".
+       - Denna lista används i nästa steg när spelaren ska välja vilken kombination som ska användas.
+
+______________________________________________________________________________________________________________________________
+
+Steg 5: Låt spelaren välja en kombination och räkna ut poängen
+
+
+   1. Filtrera möjliga kombinationer:
+       - Ta bort alla kombinationer i "mojliga_kombinationer" som inte finns i "tillgangliga_kombinationer".
+       (Endast kombinationer som både uppfylls OCH inte redan är använda ska vara valbara.)
+
+   2. Kontrollera listan "mojliga_kombinationer":
+
+       - Om listan "mojliga_kombinationer" är tom:
+           - Spelaren har inga möjliga kombinationer i denna runda.
+           - Visa alla kombinationer i "tillgangliga_kombinationer" (de som ännu inte är använda).
+           - Låt spelaren välja en kombination att stryka (0 poäng).
+           - Lägg till 0 poäng för den valda kombinationen.
+           - Ta bort den valda kombinationen från "tillgangliga_kombinationer".
+
+       - Om listan "mojliga_kombinationer" inte är tom:
+           - Visa alla kombinationer i "mojliga_kombinationer".
+           - Låt spelaren välja en av dessa kombinationer.
+           - Räkna ut poängen för den valda kombinationen:
+
+              -Ettor-sexor:
+                 - Poängen --> antal av värdet * värdet.
+
+              - Par:
+                 - Poängen --> värdet * 2.
+
+              -  Två par:
+                 - Poängen --> värde1 * 2 + värde2 * 2.
+
+              - Tretal:
+                 - Poängen --> värdet * 3.
+
+              - Fyrtal:
+                 - Poängen --> värdet * 4.
+      
+              - Kåk:
+                 - Poängen --> tretalets värde * 3 + parets värde * 2.
+  
+              - Liten stege:
+                 - Poängen --> alltid 15.
+
+              - Stor stege:
+                 - Poängen --> alltid 20.
+
+              - Yatzy:
+                 - Poängen --> alltid 50.
+
+              - Chans:
+                 - Poängen --> summan av alla tärningar.
+
+           - Lägg till poängen i spelarens poänglista.
+           - Ta bort den valda kombinationen från "tillgangliga_kombinationer".
+
+   3. Visa spelarens uppdaterade poäng.
+
+   4. Gå vidare till nästa kast (runda).
+
+______________________________________________________________________________________________________________________________
+
+Steg 6: Upprepa rundor tills alla kombinationer är använda
+
+
+   1. Så länge listan "tillgangliga_kombinationer" inte är tom:
+       - Starta en ny runda.
+
+   2. När listan "tillgangliga_kombinationer" är tom:
+       - Kolla om summan av poängen från 1-6 är 63 eller högre. Om den är det addera 50 poäng till totalsumman.
+
+   3. Räkna ihop spelarens slutpoäng.
+
+   4. Visa slutresultatet för spelaren.
+
+
+
+
+
+
+
+
+
+
+
+
